@@ -1,0 +1,11 @@
+events:
+	Events object attributes:
+		object: object which fired the event
+		name: the name of the event (ex: 'onShow')
+		data: data passed as arguments when triggering show function
+	flexbar-show
+		triggered when show is called
+	flexbar-hide
+		triggered when hide is called
+	flexbar-change
+		triggered when an element is added or removed from the flexBar
