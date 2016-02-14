@@ -4,7 +4,7 @@
  *  		-JQuery
  */
 (function($) {
-	var instancesId = [];
+	var instances = [];
 
 	function FlexBar($el, options) {
     	this._hiddenMethods = {
@@ -14,7 +14,7 @@
 	        onHide		: _onHide,
 	        onChange	: _onChange
 		};
-
+    	
 	    this._properties = {
 	        initialized 	: false,
 	        data			: null
@@ -22,9 +22,9 @@
 
 	    this._defaults = {
 			position	: 'top',
-			onShow		: undefined,
-			onHide		: undefined,
-			onChange	: undefined
+			onShow		: null,
+			onHide		: null,
+			onChange	: null
 	    };
 
 	    function _show(data) {
@@ -42,82 +42,71 @@
 	    };
 
 	    function _onShow(data) {
-	    	if (typeof defaults['onShow'] === 'function')
-	    		this._defaults['onShow'].apply(this, Array.prototype.slice.call(arguments, 1));
-	    	return this._defaults['onShow'];
+	    	var flexBar = $el.data('flexBar');
+	    	if (typeof flexBar._defaults['onShow'] === 'function')
+	    		flexBar._defaults['onShow'].apply(this, Array.prototype.slice.call(arguments, 1));
+	    	return flexBar._defaults['onShow'];
 	    };
 
 	    function _onHide(data) {
-	    	if (typeof defaults['onHide'] === 'function')
-	    		this._defaults['onHide'].apply(this, Array.prototype.slice.call(arguments, 1));
-	    	return this._defaults['onHide'];
+	    	var flexBar = $el.data('flexBar');
+	    	if (typeof flexBar._defaults['onHide'] === 'function')
+	    		flexBar._defaults['onHide'].apply(this, Array.prototype.slice.call(arguments, 1));
+	    	return flexBar._defaults['onHide'];
 	    };
 
 	    function _onChange(data) {
-	    	if (typeof defaults['onChange'] === 'function')
-	    		this._defaults['onChange'].apply(this, Array.prototype.slice.call(arguments, 1));
-	    	console.log('>ONHIDE event...');
-	    	return this._defaults['onChange'];
+	    	var flexBar = $el.data('flexBar');
+	    	if (typeof flexBar._defaults['onChange'] === 'function')
+	    		flexBar._defaults['onChange'].apply(this, Array.prototype.slice.call(arguments, 1));
+	    	return flexBar._defaults['onChange'];
 	    };
-	    
+
 	    this._defaults = $.extend(
     			{},
     			this._defaults,
     			options
     	);
 
-	    $el.on("flexbar-show", this._onShow);
-    	$el.on("flexbar-hide",this._onHide);
-    	$el.on("flexbar-change", this._onChange);
+	    $el.on("flexbar-show", _onShow);
+	    $el.on("flexbar-hide", _onHide);
+	    $el.on("flexbar-change", _onChange);
 
     	this._properties.initialized = true;
 	    return this;
 	}
-	
-	FlexBar.prototype.getMethods = function() {
-		return this._hiddenMethods;
-	}
 
 	$.fn.flexBar = function(methodOrOptions) {
     	$el = $(this);
-    	var elementId = $el.prop('id');
-    	if (elementId) {
-    		// Already instanciated
-	    	if ($.inArray(elementId, instancesId) > -1) {
-	    		var flexBar = $el.data('flexBar');
+    	var flexBar = $el.data('flexBar');
 
-	    		// Still passing arguments array or nothing;
-	    		if (typeof methodOrOptions === 'object' || !methodOrOptions) {
-		    		// TODO think maybe return flexBar instance instead of error ?
-	    			$.error('$.flexBar is already initialized on \'' + elementId + "\'.");
-	    		} else {
-	            	if (flexBar._hiddenMethods[methodOrOptions]) {
-	            		if (!isEvent(methodOrOptions))
-	            			return flexBar._hiddenMethods[methodOrOptions].apply(this, Array.prototype.slice.call(arguments, 1));
-	                } else if (methodOrOptions in flexBar._defaults) {
-	                	if (typeof flexBar._defaults[methodOrOptions] === 'function')
-	                		return flexBar._defaults[methodOrOptions].apply(this, Array.prototype.slice.call(arguments, 1));
-	                	else
-	                		return flexBar._defaults[methodOrOptions];
-	                } else {
-	                	$.error('Unknown method \'' +  methodOrOptions + '\' in $.flexBar');
-	                }
-	    		}
-	    	} else {
-	    		// TODO : check if no problem when el is removed from the dom
-	    		// since there si no splice or remove in the instancesId array...
-	    		instancesId.push(elementId);
-	    		var options = (typeof methodOrOptions === 'object') ? methodOrOptions : undefined;
-	    		var flexBarData = new FlexBar($el, options);
+    	if (flexBar) {
+    		if (typeof methodOrOptions === 'object' || !methodOrOptions) {
+	    		// TODO think maybe return flexBar instance instead of error ?
+    			$.error('$.flexBar is already initialized on \'' + (flexBar.prop('id') ? flexBar.prop('id') : 'Object') + "\'.");
+    		} else {
+            	if (flexBar._hiddenMethods[methodOrOptions] && !isEvent(methodOrOptions)) {
+            		return flexBar._hiddenMethods[methodOrOptions].apply($el, Array.prototype.slice.call(arguments, 1));
+                } else if (methodOrOptions in flexBar._defaults) {
+                	if (typeof flexBar._defaults[methodOrOptions] === 'function') {
+                		return flexBar._defaults[methodOrOptions].apply($el, Array.prototype.slice.call(arguments, 1));
+                	}
+                	else {
+                		return flexBar._defaults[methodOrOptions];
+                	}
+                } else {
+                	$.error('Unknown property \'' +  methodOrOptions + '\' in $.flexBar');
+                }
+    		}
+    	} else {
+    		var options = (typeof methodOrOptions === 'object') ? methodOrOptions : undefined;
+    		var flexBarData = new FlexBar($el, options);
 
-	    		console.log('>pushed: ' + $el.prop('id'));
-	    		$el.data('flexBar', flexBarData);
-	    		return $el;
-	    	}
-    	} else
-    		$.error('$.flexBar elements must have an id.');
+    		$el.data('flexBar', flexBarData);
+    		return $el;
+    	}
     };
-	
+
     /**
      * Event utils
      */

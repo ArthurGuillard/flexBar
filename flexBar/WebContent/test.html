@@ -20,12 +20,12 @@
 	$(document).ready(function() {
 		var flexBar1 = $('#flexBar1').flexBar({
 			onShow: function() {
-				console.log('lolito');
+				console.log('onShow override flexBar1');
 			}
 		});
 		var flexBar2 = $('#flexBar2').flexBar({
 			onShow: function() {
-				console.log('lolito');
+				console.log('onShow override flexBar2');
 			}
 		});
 		/* $('#flexBar1').flexBar({
@@ -33,7 +33,7 @@
 				console.log('lolito');
 			}
 		}); */
-		flexBar1.flexBar('show');
+		flexBar1.flexBar('show', 'LOLITODU BRASIL');
 		flexBar2.flexBar('show');
 	});
 </script>
