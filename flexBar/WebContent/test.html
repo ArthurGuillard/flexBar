@@ -12,29 +12,33 @@
 <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 
 <link rel="stylesheet" href="http://localhost:8080/flexBar/basicStyle.css">
+<link rel="stylesheet" href="http://localhost:8080/flexBar/flexBar.css">
 
 <script src="http://localhost:8080/flexBar/flexBar.js"></script>
 
 <title>Insert title here</title>
 <script>
+	var flexBar1 = null;
 	$(document).ready(function() {
-		var flexBar1 = $('#flexBar1').flexBar({
-			onShow: function() {
-				console.log('onShow override flexBar1');
-			}
-		});
-		var flexBar2 = $('#flexBar2').flexBar({
-			onShow: function() {
-				console.log('onShow override flexBar2');
-			}
-		});
-		/* $('#flexBar1').flexBar({
-			onShow: function() {
-				console.log('lolito');
-			}
-		}); */
-		flexBar1.flexBar('show', 'LOLITODU BRASIL');
-		flexBar2.flexBar('show');
+		var testData = {
+				onShow			: function() {
+					console.log('SHOW FIRED');
+				},
+				onInViewport	: function() {
+					console.log('IN FIRED');
+				},
+				onOutViewport	: function() {
+					console.log('OUT FIRED');
+				},
+				position		: 'top',
+				alignContent	: '',
+				backgroundColor	: 'rgba(153, 204, 255, 0.5)',
+				width			: '',
+				height			: '',
+				zIndex			: '99'
+			};
+		flexBar1 = $('#flexBar1').flexBar(testData);
+		flexBar1.flexBar('show');
 	});
 </script>
 </head>
@@ -42,8 +46,12 @@
 	<h1>
 		Ceci est une page de test
 	</h1>
-	<button id="flexBar" class="btn btn-primary">TEST THE SHIT</button>
-	<div id="flexBar1"></div>
+
+	<div id="flexBar1">
+		<button class="btn btn-primary">button1</button>
+		<button class="btn btn-primary">button2</button>
+		<button class="btn btn-primary">button3</button>
+	</div>
 	<div id="flexBar2"></div>
 	<ul class="list-group vertical-center">
 	   <li class="list-group-item">Morbi in sem quis dui placerat ornare. Pellentesque odio nisi, euismod in, pharetra a, ultricies in, diam. Sed arcu. Cras consequat.</li>
